@@ -5,16 +5,15 @@ Make message that congratulates to player for winning
 ]]
 
 function love.load()
---map container
+--seed for the RNG
     math.randomseed(os.time())
+--map container
     map = {}
     undos = {0}
     count = 1
-    pr_count = 0
 --solution container
+    pr_count = 0
     pr = {0, 0, 0, 0, 0}
---sets show solution to false
-    show = false
     width = 320
     height = 448
 --sets the window
@@ -46,7 +45,6 @@ function love.load()
                     end
                 end
             end
-            map[m] = not map[m]
             if m ~= 4 then
                 if m ~= 9 then
                     if m ~= 14 then
@@ -56,6 +54,7 @@ function love.load()
                     end
                 end
             end
+            map[m] = not map[m]
             map[m+5] = not map[m+5]
             map[m-5] = not map[m-5]
         end
@@ -63,7 +62,9 @@ function love.load()
 --this useful function measures the length of tables so the loops know how many times to count
     function tablelength(T)
         local counter = 0
-        for _ in pairs(T) do counter = counter + 1 end
+        for _ in pairs(T) do
+            counter = counter + 1
+        end
         return counter
     end
     c = tablelength(undos)
@@ -74,31 +75,26 @@ function love.draw()
     for a = 0, 4 do
         for i = 0, 4 do
             if map[i+(5*a)] == true then
-            love.graphics.draw(light_on, i*64, a*64)
+                love.graphics.draw(light_on, i*64, a*64)
             else
-            love.graphics.draw(light_off, i*64, a*64)
+                love.graphics.draw(light_off, i*64, a*64)
             end
-            i = i + 1
         end
     end
     love.graphics.draw(bottom, 0, 320)
 end
 
-function love.keyreleased(key)
-
-end
-
---mouse presses to toggle the lights and buttons
+--mouse presses to toggle the lights and button controls
 function love.mousepressed(x, y, button, istouch)
     if button == 1 then
         xmap = math.floor(x/64)
         ymap = math.floor(y/64)
         m = xmap + (ymap * 5)
---the area below
+--the area below lights
         if m < 25 then
             count = count + 1
             undos[count] = m
---new game button
+--new game button, clears tables and the board, then makes random toggles for the puzzle
         elseif m == 25 or m == 26 or m == 27 or m == 28 then
             counter = {}
             pr = {}
@@ -122,8 +118,8 @@ function love.mousepressed(x, y, button, istouch)
                 toggle(undos[count])
                 count = count - 1
             elseif pr_count > 0 then
-                    toggle(pr[pr_count]-1)
-                    pr_count = pr_count - 1
+                toggle(pr[pr_count]-1)
+                pr_count = pr_count - 1
             end
         end
         toggle(m)
